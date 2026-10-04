@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "LinkBox",
+    "slug": "linkbox",
+    "scheme": "linkbox",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.thebullet24.linkbox",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "permissions": [],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-share-intent",
+        {
+          "androidIntentFilters": [
+            "text/*"
+          ]
+        }
+      ]
+    ],
+    "ios": {
+      "bundleIdentifier": "com.thebullet24.linkbox"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "ShareExtension",
+                  "bundleIdentifier": "com.thebullet24.linkbox.share-extension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.com.thebullet24.linkbox"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "885448dc-8367-449c-9a77-9935fdf5c829"
+      }
+    }
+  }
+}
