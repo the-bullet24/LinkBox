@@ -80,8 +80,8 @@ export default function HomeScreen() {
       <CreateFolderModal
         visible={createOpen}
         onClose={() => setCreateOpen(false)}
-        onSubmit={(name) => {
-          createFolder(name);
+        onSubmit={(name, color) => {
+          createFolder(name, color);
           setCreateOpen(false);
         }}
       />
@@ -102,12 +102,13 @@ export default function HomeScreen() {
 
       <CreateFolderModal
         visible={!!renameTarget}
-        title="Renombrar carpeta"
+        title="Editar carpeta"
         confirmLabel="Guardar"
         initialValue={renameTarget?.name ?? ''}
+        initialColor={renameTarget?.color}
         onClose={() => setRenameTarget(null)}
-        onSubmit={(name) => {
-          if (renameTarget) renameFolder(renameTarget.id, name);
+        onSubmit={(name, color) => {
+          if (renameTarget) renameFolder(renameTarget.id, name, color);
           setRenameTarget(null);
         }}
       />

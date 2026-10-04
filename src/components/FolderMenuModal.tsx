@@ -20,7 +20,7 @@ export function FolderMenuModal({ visible, folderName, onClose, onRename, onDele
       </Text>
       <Pressable style={({ pressed }) => [styles.row, pressed && styles.pressed]} onPress={onRename}>
         <Text style={styles.rowEmoji}>✏️</Text>
-        <Text style={styles.rowText}>Renombrar</Text>
+        <Text style={styles.rowText}>Editar nombre y color</Text>
       </Pressable>
       <Pressable style={({ pressed }) => [styles.row, pressed && styles.pressed]} onPress={onDelete}>
         <Text style={styles.rowEmoji}>🗑️</Text>

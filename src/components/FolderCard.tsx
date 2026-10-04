@@ -16,7 +16,7 @@ export function FolderCard({ folder, onPress, onMenu }: Props) {
     <Pressable
       onPress={onPress}
       onLongPress={onMenu}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.card, { borderLeftColor: folder.color }, pressed && styles.pressed]}
     >
       <View style={styles.topRow}>
         <View style={styles.iconBubble}>
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     padding: 18,
+    borderLeftWidth: 5,
     ...shadow,
   },
   pressed: { transform: [{ scale: 0.985 }], opacity: 0.95 },

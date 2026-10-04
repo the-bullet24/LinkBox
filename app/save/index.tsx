@@ -83,7 +83,9 @@ export default function SaveLinkScreen() {
                 onPress={() => setSelectedId(f.id)}
                 style={[styles.folderRow, selected && styles.folderRowSelected, full && styles.folderRowFull]}
               >
-                <Text style={styles.folderIcon}>{f.icon}</Text>
+                <View style={[styles.folderIconBubble, { backgroundColor: f.color }]}>
+                  <Text style={styles.folderIcon}>{f.icon}</Text>
+                </View>
                 <View style={styles.folderTextCol}>
                   <Text style={styles.folderName} numberOfLines={1}>
                     {f.name}
@@ -112,8 +114,8 @@ export default function SaveLinkScreen() {
       <CreateFolderModal
         visible={createOpen}
         onClose={() => setCreateOpen(false)}
-        onSubmit={(name) => {
-          const folder = createFolder(name);
+        onSubmit={(name, color) => {
+          const folder = createFolder(name, color);
           setSelectedId(folder.id);
           setCreateOpen(false);
         }}
@@ -143,7 +145,8 @@ const styles = StyleSheet.create({
   },
   folderRowSelected: { borderColor: colors.primary, backgroundColor: colors.primarySoft },
   folderRowFull: { opacity: 0.5 },
-  folderIcon: { fontSize: 24 },
+  folderIconBubble: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  folderIcon: { fontSize: 22 },
   folderTextCol: { flex: 1 },
   folderName: { fontSize: 16, fontWeight: '700', color: colors.text },
   folderCount: { fontSize: 13, color: colors.textMuted, marginTop: 2 },

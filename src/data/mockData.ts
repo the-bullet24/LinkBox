@@ -1,4 +1,4 @@
-import { Folder, Link } from '../types';
+import { FOLDER_COLORS, Folder, Link } from '../types';
 import { getDomain } from '../utils/url';
 
 const MIN = 60 * 1000;
@@ -20,6 +20,7 @@ export function createMockFolders(): Folder[] {
       id: 'ideas',
       name: 'Ideas',
       icon: '📁',
+      color: FOLDER_COLORS[0],
       links: [
         link('i1', 'Cómo crear mejores Reels', 'https://www.instagram.com/reel/demo1/', 2 * HOUR),
         link('i2', 'Idea para contenido', 'https://www.tiktok.com/@demo/video/123', 1 * DAY),
@@ -30,6 +31,7 @@ export function createMockFolders(): Folder[] {
       id: 'musica',
       name: 'Música',
       icon: '📁',
+      color: FOLDER_COLORS[1],
       links: [
         link('m1', 'Nueva canción', 'https://youtu.be/demoSong', 5 * HOUR),
         link('m2', 'Playlist interesante', 'https://www.instagram.com/p/demo2/', 2 * DAY),
@@ -39,6 +41,7 @@ export function createMockFolders(): Folder[] {
       id: 'trabajo',
       name: 'Trabajo',
       icon: '📁',
+      color: FOLDER_COLORS[2],
       links: [
         link('t1', 'Tutorial Java', 'https://www.youtube.com/watch?v=demoJava', 8 * DAY),
       ],

@@ -5,6 +5,7 @@ const PLATFORMS: Record<PlatformKey, PlatformInfo> = {
   youtube: { key: 'youtube', label: 'YouTube', color: '#FF3B30', emoji: '▶️' },
   tiktok: { key: 'tiktok', label: 'TikTok', color: '#14B8A6', emoji: '🎵' },
   facebook: { key: 'facebook', label: 'Facebook', color: '#1877F2', emoji: '👍' },
+  whatsapp: { key: 'whatsapp', label: 'WhatsApp', color: '#25D366', emoji: '💬' },
   x: { key: 'x', label: 'X', color: '#111827', emoji: '✖️' },
   web: { key: 'web', label: 'Web', color: '#6C5CE7', emoji: '🔗' },
 };
@@ -20,6 +21,7 @@ export function detectPlatformKey(domain: string): PlatformKey {
   if (matches(d, 'youtube.com') || matches(d, 'youtu.be')) return 'youtube';
   if (matches(d, 'tiktok.com')) return 'tiktok';
   if (matches(d, 'facebook.com') || matches(d, 'fb.watch')) return 'facebook';
+  if (matches(d, 'whatsapp.com') || matches(d, 'whatsapp.net') || matches(d, 'wa.me')) return 'whatsapp';
   if (matches(d, 'x.com') || matches(d, 'twitter.com')) return 'x';
   return 'web';
 }

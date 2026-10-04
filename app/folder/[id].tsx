@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AddLinkModal } from '../../src/components/AddLinkModal';
 import { Button } from '../../src/components/Buttons';
@@ -9,7 +9,18 @@ import { LinkCard } from '../../src/components/LinkCard';
 import { ScreenHeader } from '../../src/components/ScreenHeader';
 import { useFolders } from '../../src/store/FoldersContext';
 import { colors, radius } from '../../src/theme';
-import { Link, MAX_LINKS_PER_FOLDER } from '../../src/types';
+import { Link, MAX_LINKS_PER_FOLDER, PlatformKey } from '../../src/types';
+import { detectPlatformKey, getPlatform } from '../../src/utils/platform';
+
+const PLATFORM_ORDER: PlatformKey[] = [
+  'facebook',
+  'instagram',
+  'whatsapp',
+  'x',
+  'tiktok',
+  'youtube',
+  'web',
+];
 
 export default function FolderScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,6 +31,7 @@ export default function FolderScreen() {
 
   const [addOpen, setAddOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Link | null>(null);
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<PlatformKey>>(() => new Set());
 
   // Si la carpeta ya no existe (p. ej. se eliminó), volver al inicio.
   useEffect(() => {
@@ -29,6 +41,10 @@ export default function FolderScreen() {
   if (!folder) return null;
 
   const count = folder.links.length;
+  const groups = PLATFORM_ORDER.map((key) => {
+    const links = folder.links.filter((link) => detectPlatformKey(link.domain) === key);
+    return { key, links, platform: links.length ? getPlatform(links[0].domain) : null };
+  }).filter((group) => group.links.length > 0);
   const full = count >= MAX_LINKS_PER_FOLDER;
   const progress = Math.min(count / MAX_LINKS_PER_FOLDER, 1);
 
@@ -72,26 +88,55 @@ export default function FolderScreen() {
         </View>
       </View>
 
-      <FlatList
-        data={folder.links}
-        keyExtractor={(l) => l.id}
-        contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 110 }]}
-        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-        renderItem={({ item }) => (
-          <LinkCard
-            link={item}
-            onPress={() => openLink(item.url)}
-            onMenu={() => setDeleteTarget(item)}
-          />
-        )}
-        ListEmptyComponent={
+      <ScrollView contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 110 }]}>
+        {groups.length === 0 ? (
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>🔗</Text>
             <Text style={styles.emptyTitle}>Carpeta vacía</Text>
             <Text style={styles.emptyText}>Agrega un enlace o compártelo desde otra app.</Text>
           </View>
-        }
-      />
+        ) : (
+          groups.map(({ key, links, platform }) => {
+            const collapsed = collapsedGroups.has(key);
+            return (
+              <View key={key} style={styles.platformGroup}>
+                <Pressable
+                  onPress={() =>
+                    setCollapsedGroups((current) => {
+                      const next = new Set(current);
+                      if (next.has(key)) next.delete(key);
+                      else next.add(key);
+                      return next;
+                    })
+                  }
+                  style={styles.groupHeader}
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: !collapsed }}
+                >
+                  <View style={styles.groupTitle}>
+                    <View style={[styles.platformDot, { backgroundColor: platform?.color }]} />
+                    <Text style={styles.groupLabel}>{platform?.label}</Text>
+                    <Text style={styles.groupCount}>{links.length}</Text>
+                  </View>
+                  <Text style={styles.groupToggle}>{collapsed ? '+' : '−'}</Text>
+                </Pressable>
+                {!collapsed ? (
+                  <View style={styles.groupLinks}>
+                    {links.map((link) => (
+                      <LinkCard
+                        key={link.id}
+                        link={link}
+                        onPress={() => openLink(link.url)}
+                        onMenu={() => setDeleteTarget(link)}
+                      />
+                    ))}
+                  </View>
+                ) : null}
+              </View>
+            );
+          })
+        )}
+      </ScrollView>
 
       <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 16 }]}>
         <Button label="＋  Agregar enlace" onPress={onAddPress} style={styles.bottomBtn} />
@@ -145,7 +190,23 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   fill: { height: 6, borderRadius: 3 },
-  list: { flexGrow: 1 },
+  list: { flexGrow: 1, gap: 14 },
+  platformGroup: { gap: 10 },
+  groupHeader: {
+    minHeight: 42,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    paddingHorizontal: 2,
+  },
+  groupTitle: { flexDirection: 'row', alignItems: 'center', gap: 9 },
+  platformDot: { width: 10, height: 10, borderRadius: 5 },
+  groupLabel: { fontSize: 15, fontWeight: '800', color: colors.text },
+  groupCount: { fontSize: 13, color: colors.textMuted },
+  groupToggle: { fontSize: 22, fontWeight: '600', color: colors.textMuted },
+  groupLinks: { gap: 12 },
   empty: { alignItems: 'center', marginTop: 50, gap: 6 },
   emptyEmoji: { fontSize: 46 },
   emptyTitle: { fontSize: 18, fontWeight: '800', color: colors.text },
